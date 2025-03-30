@@ -1,6 +1,14 @@
 import mongoose from "mongoose";
 const {Schema, model} = mongoose;
 
+const datasetSchema = new Schema({
+    title: String,
+    url: String,
+    subtitle: String,
+    creatorName: String,
+    downloadCount: Number
+});
+
 const messageSchema = new Schema({
     role: {
         type: String,
@@ -14,7 +22,8 @@ const messageSchema = new Schema({
     timestamp: {
         type: Date,
         default: Date.now
-    }
+    },
+    trainingData: Schema.Types.Mixed
 });
 
 const chatSessionSchema = new Schema({
@@ -28,12 +37,11 @@ const chatSessionSchema = new Schema({
         default: 'New Chat'
     },
     messages: [messageSchema],
-    trainingData: [{
-        type: String
-    }],
-    datasets: [{
-        type: Object
-    }]
+    datasets: [datasetSchema],
+    lastActive: {
+        type: Date,
+        default: Date.now
+    }
 }, { timestamps: true });
 
 const historySchema = new Schema({

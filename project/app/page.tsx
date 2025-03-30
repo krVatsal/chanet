@@ -19,14 +19,15 @@ import { NavBar } from "@/components/navbar";
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   interface User {
-    displayName: string;
+    displayName: string,
+  _id: string
   }
 
   const [user, setUser] = useState<User>();
   const {toast} = useToast()
   const logoutHandler = async () => {
     try {
-      const response = await fetch("http://localhost:5217/auth/logout", {
+      const response = await fetch("https://chanet-974929463300.asia-south2.run.app/auth/logout", {
         method: "GET",
         credentials: "include",
       });
@@ -56,7 +57,7 @@ export default function Home() {
     // Check login status
     const checkLoginStatus = async () => {
       try {
-        const response = await fetch("http://localhost:5217/auth/status", {
+        const response = await fetch("https://chanet-974929463300.asia-south2.run.app/auth/status", {
           method: "GET",
           credentials: "include",
         });
@@ -126,7 +127,7 @@ export default function Home() {
                 </AlertDialog>
               </>
             ) : (
-              <Link href="http://localhost:5217/auth/github">
+              <Link href="https://chanet-974929463300.asia-south2.run.app/auth/github">
                 <Button size="lg" className="h-12">
                   <Code2 className="mr-2 h-4 w-4" />
                   Log In to Generate Code

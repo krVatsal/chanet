@@ -101,7 +101,7 @@ ${userPrompt}`;
             trainingData: finalTrainingData,
             datasets: datasets
           });
-
+session.save()
           // Generate response using conversation context
           const conversationContext = await this.formatDBConversationHistory(session.messages);
           const systemPrompt = getSystemPrompt();
@@ -147,20 +147,37 @@ const formattedResponse = fullResponse.includes('<code>') ?
 <code>
 ${fullResponse}
 </code>`;
+console.log("uwuwu",datasets.data)
 
+// Save and emit final response
+// Inside generate-response handler
 // Save and emit final response
 session.messages.push({
   role: 'assistant',
   content: formattedResponse,
-  timestamp: new Date()
+  timestamp: new Date(),
+  trainingData: finalTrainingData
 });
 
+// Update the session's datasets
+session.datasets = datasets.data.map(dataset => ({
+  title: dataset.title,
+  url: dataset.url,
+  subtitle: dataset.subtitle,
+  creatorName: dataset.creatorName,
+  downloadCount: dataset.downloadCount
+}));
+
+session.lastActive = new Date();
+
+// Mark both arrays as modified
+history.markModified('sessions');
 await history.save();
 
 socket.emit('generate-response-result', {
   sessionId: session.sessionId,
   response: formattedResponse,
-  datasets,
+  datasets: datasets.data,
   isComplete: true
 });
 
@@ -197,34 +214,35 @@ socket.emit('error', {
 
       socket.on('get-history', async (data) => {
         try {
-          const { userId, sessionId } = data;
-          const history = await History.findOne({
-            author: new mongoose.Types.ObjectId(userId)
-          });
-
-          const session = history?.sessions.find(s => s.sessionId === sessionId);
-
-          if (!session) {
-            socket.emit('history-result', {
-              messages: [],
-              isEmpty: true
+            const { userId, sessionId } = data;
+            const history = await History.findOne({
+                author: new mongoose.Types.ObjectId(userId)
             });
-            return;
-          }
-
-          socket.emit('history-result', {
-            sessionId: session.sessionId,
-            title: session.title,
-            messages: session.messages,
-            isEmpty: false
-          });
+        
+            const session = history?.sessions.find(s => s.sessionId === sessionId);
+        
+            if (!session) {
+                socket.emit('history-result', { messages: [], isEmpty: true });
+                return;
+            }
+            
+            socket.emit('history-result', {
+                sessionId: session.sessionId,
+                title: session.title,
+                messages: session.messages,
+                lastResponse: session.messages
+                    .filter(msg => msg.role === 'assistant')
+                    .pop()?.content || '',
+                datasets: session.datasets || [],
+                isEmpty: false
+            });
         } catch (error) {
-          socket.emit('error', {
-            message: `History retrieval failed: ${error.message}`,
-            type: 'history-retrieval'
-          });
+            socket.emit('error', {
+                message: `History retrieval failed: ${error.message}`,
+                type: 'history-retrieval'
+            });
         }
-      });
+    });
 
       socket.on('create-session', async (data) => {
         try {

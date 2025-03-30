@@ -10,8 +10,8 @@ router.get('/github', passport.authenticate('github'));
 router.get(
   '/github/callback',
   passport.authenticate('github', {
-    failureRedirect: 'http://localhost:3000', // Redirect here if authentication fails
-    successRedirect: 'http://localhost:3000',      // Redirect here if authentication succeeds
+    failureRedirect: 'https://chanet-974929463300.asia-south2.run.app', // Redirect here if authentication fails
+    successRedirect: 'https://chanet-974929463300.asia-south2.run.app',      // Redirect here if authentication succeeds
   })
 );
 
