@@ -21,24 +21,31 @@ initSocketHandler(server);
 dbConnect();
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: "https://chanet-frontend-974929463300.asia-south2.run.app",
     credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cookie'
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(
-    session({
-      secret: 'your_secret',
-      resave: false,
-      saveUninitialized: true,
-      store: MongoStore.create({ mongoUrl:process.env.DATABASE}),
-      cookie: { maxAge: 1000 * 60 * 60 * 24 }, // 1 day
-    })
-);
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.DATABASE,
+    ttl: 24 * 60 * 60 // 1 day
+  }),
+  cookie: {
+    secure: true,
+    sameSite: 'none',
+    maxAge: 24 * 60 * 60 * 1000
+  }
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-
+app.set('trust proxy', 1); // Trust the first proxy
 // Global variables for flash messages
 app.use((req, res, next) => {
   res.locals.success_msg = req.flash('success_msg');

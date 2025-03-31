@@ -66,13 +66,13 @@ useEffect(() => {
           'Content-Type': 'application/json',
         }
       });
-
       if (!response.ok) {
         router.push('/');
         throw new Error('Not authenticated');
       }
 
       const data = await response.json();
+      console.log(data)
       isAuth(true);
       setSkeleton(false);
       // Set userId from localStorage

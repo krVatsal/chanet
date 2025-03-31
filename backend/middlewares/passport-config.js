@@ -5,7 +5,7 @@ import History from '../models/history.js';
 
 const GITHUB_CLIENT_ID = process.env.CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.CLIENT_SECRET;
-const GITHUB_CALLBACK_URL = 'http://localhost:5217/auth/github/callback';
+const GITHUB_CALLBACK_URL = 'https://chanet-974929463300.asia-south2.run.app/auth/github/callback';
 
 // GitHub Strategy
 passport.use(

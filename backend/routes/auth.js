@@ -10,8 +10,8 @@ router.get('/github', passport.authenticate('github'));
 router.get(
   '/github/callback',
   passport.authenticate('github', {
-    failureRedirect: 'https://chanet-974929463300.asia-south2.run.app', // Redirect here if authentication fails
-    successRedirect: 'https://chanet-974929463300.asia-south2.run.app',      // Redirect here if authentication succeeds
+    failureRedirect: 'https://chanet-frontend-974929463300.asia-south2.run.app', // Redirect here if authentication fails
+    successRedirect: 'https://chanet-frontend-974929463300.asia-south2.run.app',      // Redirect here if authentication succeeds
   })
 );
 
@@ -24,7 +24,7 @@ router.get('/logout', (req, res) => {
 
   });
   console.log("logged out")
-  // res.redirect('http://localhost:3000/'); // Redirect to the home page or login page after logout
+  // res.redirect('https://chanet-frontend-974929463300.asia-south2.run.app/'); // Redirect to the home page or login page after logout
   return res.status(200).json({ message: 'Logged out' });
 });
 

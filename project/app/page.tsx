@@ -52,35 +52,39 @@ export default function Home() {
       });
     }
   }
-
-  useEffect(() => {
-    // Check login status
-    const checkLoginStatus = async () => {
-      try {
-        const response = await fetch("https://chanet-974929463300.asia-south2.run.app/auth/status", {
-          method: "GET",
-          credentials: "include",
-        });
-        if (response.ok) {
-          const data = await response.json();
-          if (data.loggedIn) {
-            console.log(data.user);
-            setIsLoggedIn(true);
-            setUser(data.user);
-          } else {
-            setIsLoggedIn(false);
-          }
-        } else {
-          setIsLoggedIn(false);
+useEffect(() => {
+  const checkLoginStatus = async () => {
+    try {
+      const response = await fetch("https://chanet-974929463300.asia-south2.run.app/auth/status", {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
         }
-      } catch (error) {
-        console.error("Error verifying login status", error);
+      });
+      
+      const data = await response.json();
+      console.log(data)
+      if (response.ok && data.loggedIn) {
+        setIsLoggedIn(true);
+        setUser(data.user);
+        localStorage.setItem("userId", data.user._id);
+      } else {
         setIsLoggedIn(false);
+        setUser(undefined);
+        localStorage.removeItem("userId");
       }
-    };
+    } catch (error) {
+      console.error("Error verifying login status:", error);
+      setIsLoggedIn(false);
+      setUser(undefined);
+      localStorage.removeItem("userId");
+    }
+  };
 
-    checkLoginStatus();
-  }, []);
+  checkLoginStatus();
+}, []);
   useEffect(() => {
     if(user?._id){
       localStorage.setItem("userId", user._id);

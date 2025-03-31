@@ -101,7 +101,6 @@ ${userPrompt}`;
             trainingData: finalTrainingData,
             datasets: datasets
           });
-session.save()
           // Generate response using conversation context
           const conversationContext = await this.formatDBConversationHistory(session.messages);
           const systemPrompt = getSystemPrompt();
